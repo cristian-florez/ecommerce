@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.ecommerce.exception.DatabaseException;
+import com.ecommerce.exception.ResourceNotFoundException;
 import com.ecommerce.models.Product;
 import com.ecommerce.repositories.ProductRepository;
 
@@ -19,17 +22,17 @@ public class ProductService {
     public List<Product> products(){
         try {
             return productRepository.findAll();
-        } catch (Exception e) {
-            throw new RuntimeException("error listing products", e);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("Database error while listing products");
         }
     }
 
     // metodo para buscar un producto por ID
     public Product findProductById(Integer id){
         try {
-            return productRepository.findById(id).orElseThrow(()->new RuntimeException("product with ID " + id + "not found"));
-        } catch (Exception e) {
-            throw new RuntimeException("error fiding product by ID", e);
+            return productRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("product with ID " + id + "not found"));
+        } catch (DataAccessException e) {
+            throw new DatabaseException("Database error while finding product by ID");
         }
     }
 
@@ -37,8 +40,8 @@ public class ProductService {
     public Product save(Product product){
         try {
             return productRepository.save(product);
-        } catch (Exception e) {
-            throw new RuntimeException("error saving the product", e);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("error saving the product");
         }
     }
 
@@ -56,17 +59,19 @@ public class ProductService {
 
             return save(productFound);
             
-        } catch (Exception e) {
-            throw new RuntimeException("error updating the product", e);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("error updating the product");
         }
     }
 
     // metodo para eliminar un producto
     public void delete(Integer id){
         try {
-            productRepository.deleteById(id);
-        } catch (Exception e) {
-            throw new RuntimeException("error deleting the product", e);
+            Product productFound = findProductById(id);
+
+            productRepository.deleteById(productFound.getIdProduct());
+        } catch (DataAccessException e) {
+            throw new DatabaseException("error deleting the product");
         }
     }
 
@@ -106,8 +111,8 @@ public class ProductService {
             
             return productRepository.findAll();
                     
-        } catch (Exception e) {
-            throw new RuntimeException("error filtering the products", e);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("error filtering the products");
         }
     }
 
@@ -118,8 +123,8 @@ public class ProductService {
                 return productRepository.findByNameContaining(name);
             }
             return productRepository.findAll();
-        } catch (Exception e) {
-            throw new RuntimeException("error flitering by name the products", e);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("error flitering by name the products");
         }
     }
 

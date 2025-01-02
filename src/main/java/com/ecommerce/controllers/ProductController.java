@@ -28,58 +28,42 @@ public class ProductController {
     // endpoint para listar todos los productos
     @GetMapping
     public ResponseEntity<List<Product>> products(){
-        try {
-            List<Product> products = productService.products();
-            return ResponseEntity.ok(products);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+
+        List<Product> products = productService.products();
+        return ResponseEntity.ok(products);
     }
 
     // endpoint para buscar un producto por ID
     @GetMapping("/{id}")
     public ResponseEntity<Product> productById(@PathVariable Integer id){
-        try {
-            Product product = productService.findProductById(id);
-            return ResponseEntity.ok(product);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+
+        Product product = productService.findProductById(id);
+        return ResponseEntity.ok(product);
     }
 
     // endpoint para guardar un producto
     @PostMapping
     public ResponseEntity<Product> save(@RequestBody Product newProduct){
-        try {
-            Product product = productService.save(newProduct);
-            return ResponseEntity.status(HttpStatus.CREATED).body(product); 
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-    }
 
+        Product product = productService.save(newProduct);
+        return ResponseEntity.status(HttpStatus.CREATED).body(product); 
+    }
+ 
     // endpoint para actualizar un producto
     @PutMapping("/{id}")
     public ResponseEntity<Product> update(
         @PathVariable Integer id, 
         @RequestBody Product product){
-            try {
-                Product UpdatedProduct = productService.update(id, product);
-                return ResponseEntity.ok(UpdatedProduct);
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-            }
+
+            Product UpdatedProduct = productService.update(id, product);
+            return ResponseEntity.ok(UpdatedProduct);
         }
     
     // endpoint para eliminar un producto
     @DeleteMapping("/{id}")
     public ResponseEntity<Product> delete(@PathVariable Integer id){
-        try {
-            productService.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+        productService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     // endpoint para filtrar productos por categoria y precio
@@ -89,23 +73,16 @@ public class ProductController {
         @RequestParam(required = false) Double minPrice,
         @RequestParam(required = false) Double maxPrice
     ){
-        try {
-            List<Product> products = productService.filter(category, minPrice, maxPrice);
+        List<Product> products = productService.filter(category, minPrice, maxPrice);
             return ResponseEntity.ok(products);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
     }
 
     // endpoint para buscar productos por nombre
     @GetMapping("/search")
     public ResponseEntity<List<Product>> filterByNameProducts(
         @RequestParam(required = false) String name){
-            try {
-                List<Product> products = productService.filterByName(name);
-                return ResponseEntity.ok(products);
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-            }
+            
+            List<Product> products = productService.filterByName(name);
+            return ResponseEntity.ok(products);
         }
 }
